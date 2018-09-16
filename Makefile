@@ -5,7 +5,7 @@ all:
 	$(MAKE) -C vessel-service build
 	docker-compose build
 
-cli:
+cli: consignment
 	$(MAKE) -C consignment-cli clean build image
 
 consignment:
