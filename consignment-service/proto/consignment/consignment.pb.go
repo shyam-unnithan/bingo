@@ -8,9 +8,8 @@ import fmt "fmt"
 import math "math"
 
 import (
-	client "github.com/micro/go-micro/client"
-	server "github.com/micro/go-micro/server"
 	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -39,7 +38,7 @@ func (m *Consignment) Reset()         { *m = Consignment{} }
 func (m *Consignment) String() string { return proto.CompactTextString(m) }
 func (*Consignment) ProtoMessage()    {}
 func (*Consignment) Descriptor() ([]byte, []int) {
-	return fileDescriptor_consignment_e41a5a2f472fac0d, []int{0}
+	return fileDescriptor_consignment_1b45688c3dadb904, []int{0}
 }
 func (m *Consignment) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Consignment.Unmarshal(m, b)
@@ -108,7 +107,7 @@ func (m *Container) Reset()         { *m = Container{} }
 func (m *Container) String() string { return proto.CompactTextString(m) }
 func (*Container) ProtoMessage()    {}
 func (*Container) Descriptor() ([]byte, []int) {
-	return fileDescriptor_consignment_e41a5a2f472fac0d, []int{1}
+	return fileDescriptor_consignment_1b45688c3dadb904, []int{1}
 }
 func (m *Container) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Container.Unmarshal(m, b)
@@ -166,7 +165,7 @@ func (m *GetRequest) Reset()         { *m = GetRequest{} }
 func (m *GetRequest) String() string { return proto.CompactTextString(m) }
 func (*GetRequest) ProtoMessage()    {}
 func (*GetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_consignment_e41a5a2f472fac0d, []int{2}
+	return fileDescriptor_consignment_1b45688c3dadb904, []int{2}
 }
 func (m *GetRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetRequest.Unmarshal(m, b)
@@ -199,7 +198,7 @@ func (m *Response) Reset()         { *m = Response{} }
 func (m *Response) String() string { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()    {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_consignment_e41a5a2f472fac0d, []int{3}
+	return fileDescriptor_consignment_1b45688c3dadb904, []int{3}
 }
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Response.Unmarshal(m, b)
@@ -249,82 +248,114 @@ func init() {
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ client.Option
-var _ server.Option
+var _ grpc.ClientConn
 
-// Client API for ShippingService service
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
 
+// ShippingServiceClient is the client API for ShippingService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ShippingServiceClient interface {
-	CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*Response, error)
-	GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error)
+	CreateConsignment(ctx context.Context, in *Consignment, opts ...grpc.CallOption) (*Response, error)
+	GetConsignments(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
 type shippingServiceClient struct {
-	c           client.Client
-	serviceName string
+	cc *grpc.ClientConn
 }
 
-func NewShippingServiceClient(serviceName string, c client.Client) ShippingServiceClient {
-	if c == nil {
-		c = client.NewClient()
-	}
-	if len(serviceName) == 0 {
-		serviceName = "bingo"
-	}
-	return &shippingServiceClient{
-		c:           c,
-		serviceName: serviceName,
-	}
+func NewShippingServiceClient(cc *grpc.ClientConn) ShippingServiceClient {
+	return &shippingServiceClient{cc}
 }
 
-func (c *shippingServiceClient) CreateConsignment(ctx context.Context, in *Consignment, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.serviceName, "ShippingService.CreateConsignment", in)
+func (c *shippingServiceClient) CreateConsignment(ctx context.Context, in *Consignment, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.c.Call(ctx, req, out, opts...)
+	err := c.cc.Invoke(ctx, "/bingo.ShippingService/CreateConsignment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *shippingServiceClient) GetConsignments(ctx context.Context, in *GetRequest, opts ...client.CallOption) (*Response, error) {
-	req := c.c.NewRequest(c.serviceName, "ShippingService.GetConsignments", in)
+func (c *shippingServiceClient) GetConsignments(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.c.Call(ctx, req, out, opts...)
+	err := c.cc.Invoke(ctx, "/bingo.ShippingService/GetConsignments", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for ShippingService service
-
-type ShippingServiceHandler interface {
-	CreateConsignment(context.Context, *Consignment, *Response) error
-	GetConsignments(context.Context, *GetRequest, *Response) error
+// ShippingServiceServer is the server API for ShippingService service.
+type ShippingServiceServer interface {
+	CreateConsignment(context.Context, *Consignment) (*Response, error)
+	GetConsignments(context.Context, *GetRequest) (*Response, error)
 }
 
-func RegisterShippingServiceHandler(s server.Server, hdlr ShippingServiceHandler, opts ...server.HandlerOption) {
-	s.Handle(s.NewHandler(&ShippingService{hdlr}, opts...))
+func RegisterShippingServiceServer(s *grpc.Server, srv ShippingServiceServer) {
+	s.RegisterService(&_ShippingService_serviceDesc, srv)
 }
 
-type ShippingService struct {
-	ShippingServiceHandler
+func _ShippingService_CreateConsignment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Consignment)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).CreateConsignment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bingo.ShippingService/CreateConsignment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).CreateConsignment(ctx, req.(*Consignment))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func (h *ShippingService) CreateConsignment(ctx context.Context, in *Consignment, out *Response) error {
-	return h.ShippingServiceHandler.CreateConsignment(ctx, in, out)
+func _ShippingService_GetConsignments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ShippingServiceServer).GetConsignments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bingo.ShippingService/GetConsignments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ShippingServiceServer).GetConsignments(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func (h *ShippingService) GetConsignments(ctx context.Context, in *GetRequest, out *Response) error {
-	return h.ShippingServiceHandler.GetConsignments(ctx, in, out)
+var _ShippingService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "bingo.ShippingService",
+	HandlerType: (*ShippingServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateConsignment",
+			Handler:    _ShippingService_CreateConsignment_Handler,
+		},
+		{
+			MethodName: "GetConsignments",
+			Handler:    _ShippingService_GetConsignments_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/consignment/consignment.proto",
 }
 
 func init() {
-	proto.RegisterFile("proto/consignment/consignment.proto", fileDescriptor_consignment_e41a5a2f472fac0d)
+	proto.RegisterFile("proto/consignment/consignment.proto", fileDescriptor_consignment_1b45688c3dadb904)
 }
 
-var fileDescriptor_consignment_e41a5a2f472fac0d = []byte{
+var fileDescriptor_consignment_1b45688c3dadb904 = []byte{
 	// 343 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x52, 0x4b, 0x4e, 0xe3, 0x40,
 	0x10, 0x1d, 0xe7, 0xef, 0x72, 0x34, 0x99, 0xd4, 0x62, 0xc6, 0x1a, 0x16, 0x58, 0x66, 0x93, 0x55,
