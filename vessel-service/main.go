@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	micro "github.com/micro/go-micro"
+	k8s "github.com/micro/kubernetes/go/micro"
 	pb "github.com/shyam-unnithan/bingo/vessel-service/proto/vessel"
 )
 
@@ -52,7 +53,7 @@ func main() {
 	}
 	repo := &VesselRepository{vessels}
 
-	srv := micro.NewService(
+	srv := k8s.NewService(
 		micro.Name("bingo.svc.vessel"),
 		micro.Version("latest"),
 	)

@@ -4,7 +4,6 @@ package bingo;
 
 service ShippingService {
   rpc CreateConsignment(Consignment) returns (Response){}
-
   rpc GetConsignments(GetRequest) returns (Response) {}
 }
 

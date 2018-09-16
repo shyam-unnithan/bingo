@@ -1,18 +1,18 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os"
 
-	microclient "github.com/micro/go-micro/client"
-	"github.com/micro/go-micro/cmd"
 	pb "github.com/shyam-unnithan/bingo/consignment-service/proto/consignment"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 const (
-	address         = "localhost:50051"
+	address         = "consignment.bingo.192.168.64.2.nip.io:50051"
 	defaultFilename = "consignment.json"
 )
 
@@ -27,10 +27,20 @@ func parseFile(file string) (*pb.Consignment, error) {
 }
 
 func main() {
-	cmd.Init()
-	client := pb.NewShippingServiceClient("bingo.svc.consignment", microclient.DefaultClient)
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+	client := pb.NewShippingServiceClient(conn)
 
+	// Contact the server and print out its response.
 	file := defaultFilename
+	if len(os.Args) > 1 {
+		file = os.Args[1]
+	}
+
 	consignment, err := parseFile(file)
 
 	if err != nil {
