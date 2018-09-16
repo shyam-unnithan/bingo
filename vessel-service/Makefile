@@ -5,8 +5,8 @@ build:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64	go build -a -installsuffix cgo -o vessel-service .
 
 run:
-	docker run -p 50052:50051 -d \
-				vessel-service:latest
+	docker run -p 50051:50051 -d \
+      vessel-service:latest
 
 image: build
 	docker build -t vessel-service .
